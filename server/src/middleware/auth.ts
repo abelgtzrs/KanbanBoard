@@ -23,7 +23,7 @@ export const authenticateToken = (
   // Verify token
   jwt.verify(
     token,
-    process.env.JWT_SECRET as string,
+    process.env.JWT_SECRET_KEY as string,
     (err: any, decoded: any) => {
       if (err) {
         console.error("JWT Verification Error: ", err.message);

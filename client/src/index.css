@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap");
 
 :root {
-  font-family: 'Inter Tight', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Inter Tight", system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
   color-scheme: light dark;
@@ -13,18 +13,18 @@
 }
 
 /* webkit solution */
-::-webkit-input-placeholder { 
-  text-align:right; 
+::-webkit-input-placeholder {
+  text-align: right;
 }
 
 /* mozilla solution */
-input:-moz-placeholder { 
-  text-align:right; 
+input:-moz-placeholder {
+  text-align: right;
 }
 
 a {
   font-weight: 500;
-  color: #000000;
+  color: #ffffff;
   text-decoration: inherit;
 }
 a:hover {
@@ -32,7 +32,7 @@ a:hover {
 }
 
 body {
-  background: #ECF0F1;
+  background: #0e718a;
   background-size: cover;
   background-repeat: no-repeat no-repeat;
   background-position: center center;
@@ -105,7 +105,8 @@ tbody tr:nth-child(odd) {
 }
 
 .nav-title a {
-  color: #b864c4;
+  color: #490000;
+  font-size: 30px;
 }
 
 .nav-item {
@@ -140,22 +141,22 @@ tbody tr:nth-child(odd) {
   text-align: center;
   font-weight: 500;
   width: 33%;
-  height: 90vh; 
+  height: 90vh;
   border: 1px solid rgba(0, 0, 0, 0.2);
   margin: 5px;
   padding: 5px;
 }
 
 .todo {
-  background-color: #e9cbec;
+  background-color: #bcc4db;
 }
 
 .inprogress {
-  background-color: #b864c4;
+  background-color: #8490b1;
 }
 
 .done {
-  background-color: #732381;
+  background-color: #414e73;
 }
 
 .ticket-card {
@@ -179,9 +180,8 @@ tbody tr:nth-child(odd) {
   margin-left: auto;
 }
 
-
 .form {
-  width: 60%;
+  width: 100%;
   height: 80%;
   background-color: #b864c4;
   margin: auto;
@@ -191,13 +191,13 @@ tbody tr:nth-child(odd) {
   align-items: center;
 }
 
-.form > h1, .form > label {
+.form > h1,
+.form > label {
   color: yellow;
 }
 
 .form > input {
   width: 200px;
-  
 }
 
 .form > label {
@@ -216,18 +216,19 @@ tbody tr:nth-child(odd) {
 }
 
 .editBtn {
-  background-color: #f9f9f9;
+  background-color: #424457;
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   cursor: pointer;
   transition: border-color 0.25s;
+  margin: 5px;
 }
 
 .deleteBtn {
-  background-color: #f9f9f9;
+  background-color: #424457;
   font-weight: 500;
-  color: black;
+  color: white;
   text-decoration: inherit;
 }
 
@@ -241,7 +242,6 @@ tbody tr:nth-child(odd) {
   align-items: center;
   justify-content: center;
 }
-
 
 @media (prefers-color-scheme: light) {
   :root {
