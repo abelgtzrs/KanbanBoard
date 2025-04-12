@@ -1,31 +1,28 @@
+// Add these imports at the top
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
+
+// ... (other imports remain the same)
 import { useEffect, useState, useLayoutEffect } from "react";
 import { Link } from "react-router-dom";
-
 import { retrieveTickets, deleteTicket } from "../api/ticketAPI";
 import ErrorPage from "./ErrorPage";
 import Swimlane from "../components/Swimlane";
-import { TicketData } from "../interfaces/TicketData"; // Ensure this interface includes fields like name, createdAt etc.
+import { TicketData } from "../interfaces/TicketData";
 import { ApiMessage } from "../interfaces/ApiMessage";
-
 import auth from "../utils/auth";
 
 const boardStates = ["Todo", "In Progress", "Done"];
-
-// Define the possible fields to sort by (must exist in TicketData interface)
-type SortableField = "name" | "createdAt" | "updatedAt" | "status"; // Add other sortable fields if needed
+type SortableField = "name" | "createdAt" | "updatedAt" | "status";
 
 const Board = () => {
-  // State for raw, unsorted tickets from API
   const [rawTickets, setRawTickets] = useState<TicketData[]>([]);
-  // State for tickets that will be displayed (sorted)
   const [displayedTickets, setDisplayedTickets] = useState<TicketData[]>([]);
-  // State for sorting criteria
   const [sortBy, setSortBy] = useState<SortableField | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-
   const [error, setError] = useState(false);
   const [loginCheck, setLoginCheck] = useState(false);
 
+  // ... (checkLogin, fetchTickets, deleteIndvTicket functions remain the same) ...
   const checkLogin = () => {
     if (auth.loggedIn()) {
       setLoginCheck(true);
@@ -35,9 +32,7 @@ const Board = () => {
   const fetchTickets = async () => {
     try {
       const data = await retrieveTickets();
-      setRawTickets(data); // Store the original, unsorted data
-      // Initially display tickets as fetched (or apply default sort if desired)
-      // setDisplayedTickets(data); // We let the useEffect handle this now
+      setRawTickets(data);
     } catch (err) {
       console.error("Failed to retrieve tickets:", err);
       setError(true);
@@ -47,7 +42,6 @@ const Board = () => {
   const deleteIndvTicket = async (ticketId: number): Promise<ApiMessage> => {
     try {
       const data = await deleteTicket(ticketId);
-      // Refetch tickets after delete to update both raw and displayed lists
       fetchTickets();
       return data;
     } catch (err) {
@@ -65,21 +59,14 @@ const Board = () => {
     }
   }, [loginCheck]);
 
-  // useEffect hook to handle sorting when rawTickets, sortBy, or sortOrder changes
   useEffect(() => {
-    let sortedTickets = [...rawTickets]; // Start with a copy of the raw data
-
+    let sortedTickets = [...rawTickets];
     if (sortBy) {
-      // Only sort if a field is selected
       sortedTickets.sort((a, b) => {
-        // Type assertion needed because sortBy is dynamic
         const valA = a[sortBy as keyof TicketData];
         const valB = b[sortBy as keyof TicketData];
         let comparison = 0;
-
-        // Add comparisons based on expected data types
         if (sortBy === "createdAt" || sortBy === "updatedAt") {
-          // Assuming date strings; adjust if they are Date objects or numbers
           comparison =
             new Date(valA as string).getTime() -
             new Date(valB as string).getTime();
@@ -88,29 +75,46 @@ const Board = () => {
         } else if (typeof valA === "number" && typeof valB === "number") {
           comparison = valA - valB;
         }
-
-        // Apply ascending/descending order
         return sortOrder === "desc" ? comparison * -1 : comparison;
       });
     }
-    // Update the state variable used for rendering
     setDisplayedTickets(sortedTickets);
-  }, [rawTickets, sortBy, sortOrder]); // Dependencies: run when these change
+  }, [rawTickets, sortBy, sortOrder]);
 
   if (error) {
     return <ErrorPage />;
   }
 
-  // Helper function to toggle sort order or set new sort field
   const handleSort = (field: SortableField) => {
     if (sortBy === field) {
-      // If already sorting by this field, toggle order
       setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
     } else {
-      // If sorting by a new field, set it and default to ascending
       setSortBy(field);
       setSortOrder("asc");
     }
+  };
+
+  // --- Define the onDragEnd handler ---
+  const handleOnDragEnd = (result: DropResult) => {
+    // Log the result to see what information it provides
+    console.log("Drag ended:", result);
+
+    // Basic checks:
+    // - If dropped outside any droppable context
+    // - If dropped back into the same position it started
+    if (
+      !result.destination ||
+      (result.destination.droppableId === result.source.droppableId &&
+        result.destination.index === result.source.index)
+    ) {
+      return; // Do nothing
+    }
+
+    // ** TODO: Add logic here later to:**
+    // 1. Identify the dragged ticket.
+    // 2. Identify the source and destination columns (droppableId).
+    // 3. Update the ticket's status in the client state (rawTickets/displayedTickets).
+    // 4. Make an API call to update the ticket status on the server.
   };
 
   return (
@@ -121,7 +125,6 @@ const Board = () => {
         </div>
       ) : (
         <div className="board">
-          {/* --- SORT CONTROLS --- */}
           <div
             style={{
               marginBottom: "10px",
@@ -137,6 +140,10 @@ const Board = () => {
               Date Created{" "}
               {sortBy === "createdAt" ? (sortOrder === "asc" ? "▲" : "▼") : ""}
             </button>
+            <button onClick={() => handleSort("status")}>
+              Status{" "}
+              {sortBy === "status" ? (sortOrder === "asc" ? "▲" : "▼") : ""}
+            </button>
             {sortBy && (
               <button
                 onClick={() => setSortBy(null)}
@@ -146,27 +153,29 @@ const Board = () => {
               </button>
             )}
           </div>
-          {/* --- END SORT CONTROLS --- */}
 
           <button type="button" id="create-ticket-link">
             <Link to="/create">New Ticket</Link>
           </button>
-          <div className="board-display">
-            {boardStates.map((status) => {
-              // Filter based on the DISPLAYED (potentially sorted) tickets
-              const filteredTickets = displayedTickets.filter(
-                (ticket) => ticket.status === status
-              );
-              return (
-                <Swimlane
-                  title={status}
-                  key={status}
-                  tickets={filteredTickets}
-                  deleteTicket={deleteIndvTicket}
-                />
-              );
-            })}
-          </div>
+
+          <DragDropContext onDragEnd={handleOnDragEnd}>
+            <div className="board-display">
+              {boardStates.map((status) => {
+                const filteredTickets = displayedTickets.filter(
+                  (ticket) => ticket.status === status
+                );
+                return (
+                  <Swimlane
+                    title={status}
+                    status={status}
+                    key={status}
+                    tickets={filteredTickets}
+                    deleteTicket={deleteIndvTicket}
+                  />
+                );
+              })}
+            </div>
+          </DragDropContext>
         </div>
       )}
     </>
