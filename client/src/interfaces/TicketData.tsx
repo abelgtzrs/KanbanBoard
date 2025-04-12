@@ -1,4 +1,4 @@
-import { UserData } from './UserData';
+import { UserData } from "./UserData";
 
 export interface TicketData {
   id: number | null;
@@ -7,4 +7,5 @@ export interface TicketData {
   status: string | null;
   assignedUserId: number | null;
   assignedUser: UserData | null;
+  title: string | null;
 }
