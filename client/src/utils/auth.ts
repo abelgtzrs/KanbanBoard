@@ -1,18 +1,12 @@
 import { JwtPayload, jwtDecode } from "jwt-decode";
 
-interface CustomJwtPayload {
-  username?: string;
-  id?: number;
-  exp?: number;
-}
-
 class AuthService {
   getProfile() {
     // TODO: return the decoded token
     const token = this.getToken();
     if (token) {
       try {
-        const decoded = jwtDecode<CustomJwtPayload>(token);
+        const decoded = jwtDecode<JwtPayload>(token);
         return decoded;
       } catch (error) {
         console.error("Failed to decode token:", error);
@@ -32,7 +26,7 @@ class AuthService {
   isTokenExpired(token: string) {
     // TODO: return a value that indicates if the token is expired
     try {
-      const decoded = jwtDecode<CustomJwtPayload>(token);
+      const decoded = jwtDecode<JwtPayload>(token);
       if (decoded.exp && decoded.exp < Date.now() / 1000) {
         return true;
       } else {
