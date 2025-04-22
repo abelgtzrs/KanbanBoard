@@ -32,6 +32,8 @@ h1 {
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 1rem;
+  margin-left: 40%;
+  text-align: center;
 }
 
 /* Buttons */
@@ -167,6 +169,7 @@ main {
 
 .form > h1 {
   text-align: center;
+  margin-left: 0%;
   margin-bottom: 1rem;
   color: #2c3e50;
 }
